@@ -12,7 +12,7 @@
             <div class="flex flex-wrap space-y-4 mb-5 sm:space-y-0 sm:space-x-4 text-center">
                 <form action="{{ route('torrent.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-                    <input type="file" name="file[]" required>
+                    <input type="file" name="files[]" required multiple="multiple">
                     <button type="submit" class="ml-1 text-white font-bold p-2 rounded outline-none focus:outline-none mr-1 mb-1 bg-gray-800 active:bg-gray-700 text-sm shadow hover:shadow-lg">
                         Submit
                     </button>
@@ -28,6 +28,9 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                         <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                ID
+                            </th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Name
                             </th>
@@ -45,6 +48,9 @@
                         <tbody class="bg-white divide-y divide-gray-200">
                             @foreach ($torrents as $torrent)
                             <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    {{ $torrent->id }}
+                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     {{ $torrent->name }}
                                 </td>
@@ -68,6 +74,11 @@
                     </div>
                 </div>
                 </div>
+
+                <div class="mt-2">
+                    {{ $torrents->links() }}
+                </div>
+                
             </div>
         </div>
     </div>

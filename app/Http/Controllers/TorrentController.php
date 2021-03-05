@@ -15,7 +15,7 @@ class TorrentController extends Controller
      */
     public function index()
     {
-        $torrents = Torrent::all();
+        $torrents = Torrent::orderBy('id', 'desc')->paginate(10);
 
         return view('torrent.index', compact('torrents'));
     }
@@ -26,11 +26,11 @@ class TorrentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Torrent $torrent)
+    public function store(Request $request)
     {
-        $files = $request->file('file');
+        $files = $request->file('files');
 
-        if ($request->hasFile('file')) {
+        if ($request->hasFile('files')) {
             foreach ($files as $file) {
                 // upload file-nya dulu
                 $fileName = $file->getClientOriginalName();
@@ -38,6 +38,7 @@ class TorrentController extends Controller
                 $nameDir = url('/').'/storage/'.$dir;
 
                 //store to database
+                $torrent = new Torrent;
                 $torrent->name = $fileName;
                 $torrent->url = $nameDir;
                 $torrent->download_status = "pending";
