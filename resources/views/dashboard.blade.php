@@ -5,11 +5,17 @@
         </h2>
     </x-slot>
 
+    
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            
-            <button class="bg-indigo-500 px-4 py-2 text-white rounded-lg mb-5">Add New</button>
 
+            <div class="flex flex-wrap space-y-4 sm:space-y-0 sm:space-x-4 text-center">
+                <a href="{{ route('torrent.create') }}" class="github-star ml-1 text-white font-bold px-6 py-4 rounded outline-none focus:outline-none mr-1 mb-1 bg-gray-800 active:bg-gray-700 uppercase text-sm shadow hover:shadow-lg">
+                    Add New
+                </a>
+            </div>
+    
+            
             <!-- This example requires Tailwind CSS v2.0+ -->
             <div class="flex flex-col">
                 <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
