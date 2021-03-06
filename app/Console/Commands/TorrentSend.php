@@ -58,7 +58,7 @@ class TorrentSend extends Command
             $folderId = "0B6bZ0ymthTk2ME5vb2R1RFN6NXc";
 
             $response = Http::post("https://offcloud.com/api/remote?key=$apiKey", [
-                'url' => "https://offcloud.ruangkodingpro.com/public/storage/torrent_upload/StrandedTeens.21.03.04.Sera.Ryder.Ticked.Off.Teen.Uses.Older.Neighbor.XXX.1080p.MP4-WRB-[rarbg.to].torrent",
+                'url' => $url,
                 'remoteOptionId' => $remoteOptionId,
                 'folderId' => $folderId,
             ]);
