@@ -58,7 +58,7 @@ class TorrentSend extends Command
             $folderId = "0B6bZ0ymthTk2ME5vb2R1RFN6NXc";
 
             $response = Http::post("https://offcloud.com/api/remote?key=$apiKey", [
-                'url' => $url,
+                'url' => "https://offcloud.ruangkodingpro.com/public/storage/torrent_upload/StrandedTeens.21.03.04.Sera.Ryder.Ticked.Off.Teen.Uses.Older.Neighbor.XXX.1080p.MP4-WRB-[rarbg.to].torrent",
                 'remoteOptionId' => $remoteOptionId,
                 'folderId' => $folderId,
             ]);
@@ -80,10 +80,10 @@ class TorrentSend extends Command
             $torrent->request_id = $json['requestId'];
 
             $torrent->save();
-
-            // Kirim ke file Log
-            Log::channel('cronjob')->info('Cek Status Remote Upload pada '.date('d M Y H:i:s'));
         }
+
+        // Kirim ke file Log
+        Log::channel('cronjob')->info('Cek Status Remote Upload pada '.date('d M Y H:i:s'));
 
         $this->info('Cek remote upload dieksekusi pada '.date('d M Y H:i:s'));
     }
