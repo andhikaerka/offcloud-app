@@ -41,7 +41,7 @@ class TorrentController extends Controller
                 $torrent = new Torrent;
                 $torrent->name = $fileName;
                 $torrent->url = $nameDir;
-                $torrent->download_status = "pending";
+                $torrent->download_status = "new";
                 
                 $torrent->save();
             }
@@ -57,8 +57,14 @@ class TorrentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Torrent $torrent)
     {
-        //
+        // move file to recycle bin
+        Storage::disk('public')
+        ->move("torrent_upload/$torrent->name", "torrent_upload_deleted/$torrent->name");
+
+        Torrent::destroy($torrent->id);
+        
+        return redirect()->route('dashboard');
     }
 }

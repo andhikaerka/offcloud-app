@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class SendTorrents extends Command
+class TorrentSend extends Command
 {
     /**
      * The name and signature of the console command.
@@ -41,8 +41,7 @@ class SendTorrents extends Command
     public function handle()
     {
         // cek dulu apakah jumlah torrent uploads sudah mencapai 10?
-        $torrent = Torrent::where('download_status', 'pending')
-        ->first();
+        $torrent = Torrent::where('download_status', 'new')->first();
 
         // Jika ada torrent yang masih pending
         if ($torrent) {
@@ -50,22 +49,11 @@ class SendTorrents extends Command
             // Offcloud Start
             $apiKey = 'LXu2qIs7iBKS8c5BktD3vewDi5AJhICG';
         
-            // Otentikasi
-            // $response = Http::post("https://offcloud.com/api/remote/accounts?key=$apiKey");
-
-            // $obj = $response->getBody();
-            // $json = json_decode($obj, true);
-
-            // Remote Download
-            // $response = Http::post('https://offcloud.com/api/remote?key=LXu2qIs7iBKS8c5BktD3vewDi5AJhICG');
-
-            // $json['data'][0]['type']
-
             // url: URL of downloaded resource
             // remoteOptionId: ID of the remote account where to download
             // folderId: Google Drive's ID of the folder to upload content to.
 
-            $url = $torrent->url;
+            $url = $torrent->url; // resource file torrent yang akan dikirim
             $remoteOptionId = "599c53d30ca9a33797b29899";
             $folderId = "0B6bZ0ymthTk2ME5vb2R1RFN6NXc";
 
@@ -76,29 +64,25 @@ class SendTorrents extends Command
             ]);
 
             // get response remote download dari offcloud
-            /**
-             * requestId
-             * fileName: the name of the requested file
-             * site: website name
-             * status: status of the requested file downloading. Can be ‘created’, ‘downloaded’, ‘error’.
-             * originalLink: original link to the file
-             * createdOn: date and time when request was processed
-            **/
-
-            // $status =$obj["data"][0]['status'];
-
-            // atau simpan saja reponse ke log
+            // {
+            //     "requestId": "604261fbfa21cd58353a0527",
+            //     "site": "offcloud.ruangkodingpro.com",
+            //     "status": "created",
+            //     "originalLink": "https://offcloud.ruangkodingpro.com/public/storage/torrent_upload/coba.torrent",
+            //     "createdOn": "2021-03-05T16:53:15.221Z"
+            // }
 
             // lalu update ke database
+            $obj = $response->getBody();
+            $json = json_decode($obj, true);
 
-            // Cek Status Remote Download
-        
-            // Kirim ke file Log
-            Log::channel('cronjob')->info('Cek Status Remote Upload pada '.date('d M Y H:i:s'));
-        
-            $torrent->download_status = 'uploading';
+            $torrent->download_status = $json['status'];
+            $torrent->request_id = $json['requestId'];
 
             $torrent->save();
+
+            // Kirim ke file Log
+            Log::channel('cronjob')->info('Cek Status Remote Upload pada '.date('d M Y H:i:s'));
         }
 
         $this->info('Cek remote upload dieksekusi pada '.date('d M Y H:i:s'));

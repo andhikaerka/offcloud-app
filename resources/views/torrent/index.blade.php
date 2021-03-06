@@ -65,7 +65,13 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    Action
+                                    <form action="{{ route('torrent.destroy', ['torrent' => $torrent->id]) }}" method="post">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="ml-1 text-white font-bold p-2 rounded outline-none focus:outline-none mr-1 mb-1 bg-red-800 active:bg-red-700 text-sm shadow hover:shadow-lg">
+                                            Delete
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                             @endforeach

@@ -23,6 +23,7 @@ Route::get('/', function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [TorrentController::class, 'index'])->name('dashboard');
     Route::post('torrent/store', [TorrentController::class, 'store'])->name('torrent.store');
+    Route::delete('torrent/destroy/{torrent}', [TorrentController::class, 'destroy'])->name('torrent.destroy');
 });
 
 require __DIR__.'/auth.php';
