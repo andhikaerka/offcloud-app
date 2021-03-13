@@ -2,7 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Torrent;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class TorrentRetry extends Command
 {
@@ -11,14 +14,18 @@ class TorrentRetry extends Command
      *
      * @var string
      */
-    protected $signature = 'command:name';
+    protected $signature = 'torrent:retry';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Retry torrent remote download yang statusnya bukan 
+    uploaded, 
+    created, 
+    downloading, 
+    queued';
 
     /**
      * Create a new command instance.
@@ -37,6 +44,34 @@ class TorrentRetry extends Command
      */
     public function handle()
     {
-        return 0;
+        $torrents = Torrent::where('download_status', '<>', 'downloaded')
+        ->orWhere('download_status', '<>', 'created')
+        ->orWhere('download_status', '<>', 'queued')
+        ->orWhere('download_status', '<>', 'downloading')
+        ->get();
+
+        foreach ($torrents as $torrent) {
+            // Offcloud Start
+            $apiKey = 'LXu2qIs7iBKS8c5BktD3vewDi5AJhICG';
+
+            $response = Http::get("https://offcloud.com/api/remote/retry/$torrent->request_id?key=$apiKey");
+
+            // lalu update ke database
+            $obj = $response->getBody();
+            $json = json_decode($obj, true);
+
+            if ($json['status']['status']) {
+                $torrent->download_status = $json['status']['status'];
+                $torrent->save();
+            }
+
+            // Kirim ke file Log
+            Log::channel('cronjob')->info("Retry Remote download $torrent->name pada ".date('d M Y H:i:s'));
+
+            //sleep for 3 seconds
+            sleep(3);
+        }
+
+        $this->info('Remote download dieksekusi pada '.date('d M Y H:i:s'));
     }
 }

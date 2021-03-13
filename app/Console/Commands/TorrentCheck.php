@@ -2,7 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Torrent;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class TorrentCheck extends Command
 {
@@ -11,14 +14,14 @@ class TorrentCheck extends Command
      *
      * @var string
      */
-    protected $signature = 'command:name';
+    protected $signature = 'torrent:check';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Cek status remote download';
 
     /**
      * Create a new command instance.
@@ -37,6 +40,32 @@ class TorrentCheck extends Command
      */
     public function handle()
     {
-        return 0;
+        $torrents = Torrent::where('download_status', '<>', 'downloaded')->get();
+
+        foreach ($torrents as $torrent) {
+            // Offcloud Start
+            $apiKey = 'LXu2qIs7iBKS8c5BktD3vewDi5AJhICG';
+
+            $response = Http::post("https://offcloud.com/api/remote/status?key=$apiKey", [
+                'requestId' => $torrent->request_id,
+            ]);
+
+            // lalu update ke database
+            $obj = $response->getBody();
+            $json = json_decode($obj, true);
+
+            if ($json['status']['status']) {
+                $torrent->download_status = $json['status']['status'];
+                $torrent->save();
+            }
+
+            // Kirim ke file Log
+            Log::channel('cronjob')->info("Cek Status Remote Download $torrent->name pada ".date('d M Y H:i:s'));
+
+            //sleep for 3 seconds
+            sleep(3);
+        }
+
+        $this->info('Remote Download dieksekusi pada '.date('d M Y H:i:s'));
     }
 }

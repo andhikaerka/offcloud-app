@@ -80,10 +80,10 @@ class TorrentSend extends Command
             $torrent->request_id = $json['requestId'];
 
             $torrent->save();
-        }
 
-        // Kirim ke file Log
-        Log::channel('cronjob')->info('Cek Status Remote Upload pada '.date('d M Y H:i:s'));
+            // Kirim ke file Log
+            Log::channel('cronjob')->info('Start Remote Upload '.$torrent->name.' pada '.date('d M Y H:i:s'));
+        }
 
         $this->info('Cek remote upload dieksekusi pada '.date('d M Y H:i:s'));
     }

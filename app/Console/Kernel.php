@@ -27,6 +27,8 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
 
         $schedule->command('torrent:send')->everyMinute();
+        $schedule->command('torrent:check')->everyTwoMinutes();
+        // $schedule->command('torrent:retry')->everyThreeMinutes();
     }
 
     /**
