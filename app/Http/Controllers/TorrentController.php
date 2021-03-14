@@ -35,7 +35,7 @@ class TorrentController extends Controller
                 // upload file-nya dulu
                 $fileName = $file->getClientOriginalName();
                 $dir = $file->storeAs('torrent_upload', $fileName, 'public');
-                $nameDir = url('/').'/storage/'.$dir;
+                $nameDir = url('/').'/public/storage/'.$dir;
 
                 //store to database
                 $torrent = new Torrent;
