@@ -48,6 +48,7 @@ class TorrentRetry extends Command
         ->orWhere('download_status', '<>', 'created')
         ->orWhere('download_status', '<>', 'queued')
         ->orWhere('download_status', '<>', 'downloading')
+        ->orWhere('download_status', '<>', 'uploading')
         ->get();
 
         foreach ($torrents as $torrent) {
