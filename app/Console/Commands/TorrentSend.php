@@ -41,7 +41,7 @@ class TorrentSend extends Command
     public function handle()
     {
         // cek dulu apakah jumlah torrent uploads sudah mencapai 100?
-        $torrents_count = Torrent::all()->count();
+        $torrents_count = Torrent::whereNotNull('request_id')->count();
 
         if ($torrents_count < 100) {
             $torrent = Torrent::where('download_status', 'new')->first();

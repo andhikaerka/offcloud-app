@@ -40,7 +40,9 @@ class TorrentCheck extends Command
      */
     public function handle()
     {
-        $torrents = Torrent::where('download_status', '<>', 'downloaded')->get();
+        $torrents = Torrent::where('download_status', '<>', 'downloaded')
+        ->whereNotNull('request_id')
+        ->get();
 
         foreach ($torrents as $torrent) {
             // Offcloud Start
