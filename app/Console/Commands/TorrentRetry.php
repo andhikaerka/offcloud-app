@@ -46,10 +46,10 @@ class TorrentRetry extends Command
     {
         $torrents = Torrent::where('download_status', '<>', 'downloaded')
         ->whereNotNull('request_id')
-        ->orWhere('download_status', '<>', 'created')
-        ->orWhere('download_status', '<>', 'queued')
-        ->orWhere('download_status', '<>', 'downloading')
-        ->orWhere('download_status', '<>', 'uploading')
+        ->where('download_status', '<>', 'created')
+        ->where('download_status', '<>', 'queued')
+        ->where('download_status', '<>', 'downloading')
+        ->where('download_status', '<>', 'uploading')
         ->get();
 
         foreach ($torrents as $torrent) {
