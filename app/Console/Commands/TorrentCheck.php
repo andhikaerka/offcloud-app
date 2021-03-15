@@ -56,13 +56,21 @@ class TorrentCheck extends Command
             $obj = $response->getBody();
             $json = json_decode($obj, true);
 
-            if ($json['status']['status']) {
-                $torrent->download_status = $json['status']['status'];
+            if (empty($json)) {
+                $torrent->download_status = "new";
                 $torrent->save();
-            }
 
-            // Kirim ke file Log
-            Log::channel('cronjob')->info("Cek Status Remote Download $torrent->name pada ".date('d M Y H:i:s'));
+                // Kirim ke file Log
+                Log::channel('cronjob')->info("$torrent->name reset to new.");
+            } else {
+                if ($json['status']['status']) {
+                    $torrent->download_status = $json['status']['status'];
+                    $torrent->save();
+                }
+    
+                // Kirim ke file Log
+                Log::channel('cronjob')->info("Cek Status Remote Download $torrent->name pada ".date('d M Y H:i:s'));
+            }
 
             //sleep for 3 seconds
             sleep(3);
