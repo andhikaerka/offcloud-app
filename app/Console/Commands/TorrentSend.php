@@ -49,7 +49,7 @@ class TorrentSend extends Command
             // Jika ada torrent yang masih pending
             if ($torrent) {
 
-            // Offcloud Start
+                // Offcloud Start
                 $apiKey = 'LXu2qIs7iBKS8c5BktD3vewDi5AJhICG';
         
                 // url: URL of downloaded resource
@@ -61,22 +61,30 @@ class TorrentSend extends Command
                 $folderId = "0B6bZ0ymthTk2ME5vb2R1RFN6NXc";
 
                 $response = Http::post("https://offcloud.com/api/remote?key=$apiKey", [
-                'url' => $url,
-                'remoteOptionId' => $remoteOptionId,
-                'folderId' => $folderId,
-            ]);
+                    'url' => $url,
+                    'remoteOptionId' => $remoteOptionId,
+                    'folderId' => $folderId,
+                ]);
 
                 // lalu update ke database
                 $obj = $response->getBody();
                 $json = json_decode($obj, true);
 
-                $torrent->download_status = $json['status'];
-                $torrent->request_id = $json['requestId'];
+                if (empty($json)) {
+                    // Kirim ke file Log
+                    Log::channel('cronjob')->info('reset to new'.$torrent->name);
+                } elseif ($json['error']) {
+                    // Kirim ke file Log
+                    Log::channel('cronjob')->info($json['error']);
+                } else {
+                    $torrent->download_status = $json['status'];
+                    $torrent->request_id = $json['requestId'];
 
-                $torrent->save();
+                    $torrent->save();
 
-                // Kirim ke file Log
-                Log::channel('cronjob')->info('Start Remote Upload '.$torrent->name.' pada '.date('d M Y H:i:s'));
+                    // Kirim ke file Log
+                    Log::channel('cronjob')->info('Start Remote Upload '.$torrent->name);
+                }
             }
         } else {
             // jika mencapai 100 maka jangan lakukan upload
