@@ -73,7 +73,7 @@ class TorrentCheck extends Command
             }
 
             //sleep for 3 seconds
-            sleep(3);
+            sleep(1);
         }
 
         $this->info('Remote Download dieksekusi pada '.date('d M Y H:i:s'));

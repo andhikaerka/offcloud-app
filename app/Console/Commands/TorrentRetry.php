@@ -44,12 +44,8 @@ class TorrentRetry extends Command
      */
     public function handle()
     {
-        $torrents = Torrent::where('download_status', '<>', 'downloaded')
+        $torrents = Torrent::where('download_status', 'error')
         ->whereNotNull('request_id')
-        ->where('download_status', '<>', 'created')
-        ->where('download_status', '<>', 'queued')
-        ->where('download_status', '<>', 'downloading')
-        ->where('download_status', '<>', 'uploading')
         ->get();
 
         foreach ($torrents as $torrent) {
@@ -63,7 +59,7 @@ class TorrentRetry extends Command
             $json = json_decode($obj, true);
 
             if (!empty($json)) {
-                if ($json['status']['status']) {
+                if (array_key_exists('status', $json)) {
                     $torrent->download_status = $json['status']['status'];
                     $torrent->save();
 
@@ -71,9 +67,9 @@ class TorrentRetry extends Command
                     Log::channel('cronjob')->info("Retry Remote download $torrent->name");
                 }
             }
-            
+
             //sleep for 3 seconds
-            sleep(3);
+            sleep(2);
         }
 
         $this->info('Remote download dieksekusi pada '.date('d M Y H:i:s'));

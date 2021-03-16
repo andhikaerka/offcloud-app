@@ -53,7 +53,7 @@ class TorrentDelete extends Command
             Log::channel('cronjob')->info("Delete downloaded $torrent->name pada ".date('d M Y H:i:s'));
 
             //sleep for 3 seconds
-            sleep(3);
+            sleep(1);
         }
 
         $this->info('Delete Downloaded Torrent dieksekusi pada '.date('d M Y H:i:s'));
