@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Torrent;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class TorrentController extends Controller
@@ -15,9 +16,19 @@ class TorrentController extends Controller
      */
     public function index()
     {
-        $torrents = Torrent::orderBy('id', 'desc')->paginate(10);
+        $torrents = Torrent::when(request('category'), function ($query) {
+            return $query->where('download_status', request('category'));
+        })->orderBy('id', 'desc')
+        ->paginate(10);
 
-        return view('torrent.index', compact('torrents'));
+        $torrent_categories = Torrent::select(
+            'download_status',
+            DB::raw("COUNT(download_status) AS total")
+        )
+        ->groupBy('download_status')
+        ->get();
+
+        return view('torrent.index', compact('torrents', 'torrent_categories'));
     }
 
     /**

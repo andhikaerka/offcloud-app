@@ -73,17 +73,21 @@ class TorrentSend extends Command
                 if (empty($json)) {
                     // Kirim ke file Log
                     Log::channel('cronjob')->info('reset to new'.$torrent->name);
-                } elseif ($json['error']) {
-                    // Kirim ke file Log
-                    Log::channel('cronjob')->info($json['error']);
                 } else {
-                    $torrent->download_status = $json['status'];
-                    $torrent->request_id = $json['requestId'];
-
-                    $torrent->save();
-
-                    // Kirim ke file Log
-                    Log::channel('cronjob')->info('Start Remote Upload '.$torrent->name);
+                    if (array_key_exists('error', $json)) {
+                        // Kirim ke file Log
+                        Log::channel('cronjob')->info($json['error']);
+                    }
+    
+                    if (array_key_exists('status', $json)) {
+                        $torrent->download_status = $json['status'];
+                        $torrent->request_id = $json['requestId'];
+    
+                        $torrent->save();
+    
+                        // Kirim ke file Log
+                        Log::channel('cronjob')->info('Start Remote Upload '.$torrent->name);
+                    }
                 }
             }
         } else {
@@ -93,6 +97,6 @@ class TorrentSend extends Command
         }
         
 
-        $this->info('Start remote upload dieksekusi pada '.date('d M Y H:i:s'));
+        $this->info('Start remote download dieksekusi');
     }
 }

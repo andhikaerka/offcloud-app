@@ -62,14 +62,16 @@ class TorrentRetry extends Command
             $obj = $response->getBody();
             $json = json_decode($obj, true);
 
-            if ($json['status']['status']) {
-                $torrent->download_status = $json['status']['status'];
-                $torrent->save();
+            if (!empty($json)) {
+                if ($json['status']['status']) {
+                    $torrent->download_status = $json['status']['status'];
+                    $torrent->save();
+
+                    // Kirim ke file Log
+                    Log::channel('cronjob')->info("Retry Remote download $torrent->name");
+                }
             }
-
-            // Kirim ke file Log
-            Log::channel('cronjob')->info("Retry Remote download $torrent->name pada ".date('d M Y H:i:s'));
-
+            
             //sleep for 3 seconds
             sleep(3);
         }

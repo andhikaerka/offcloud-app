@@ -18,6 +18,26 @@
                     </button>
                 </form>
             </div>
+
+            
+
+            <div class="card bg-white py-3 px-5 rounded-xl flex flex-col mb-5">
+                <div class="title text-xl font-medium">Categories</div>
+                <div class="w-full py-3">
+
+                    @foreach ($torrent_categories as $category)
+                        <div class="inline-block mr-2 mt-2">
+                            <form action="{{ route('dashboard') }}" method="get">
+
+                                <input type="hidden" name="category" value="{{ $category->download_status}}">
+
+                                <button type="submit" class="focus:outline-none text-white text-sm py-2.5 px-5 border-b-4 border-gray-800 rounded-md bg-gray-700 hover:bg-gray-600">{{ $category->download_status }}: {{ $category->total }}</button>
+                            </form>
+                        </div>
+                    @endforeach
+
+                </div>
+            </div>
     
             
             <!-- This example requires Tailwind CSS v2.0+ -->
@@ -90,7 +110,7 @@
                 </div>
 
                 <div class="mt-2">
-                    {{ $torrents->links() }}
+                    {{ $torrents->appends(['category' => request('category')])->links() }}
                 </div>
                 
             </div>
